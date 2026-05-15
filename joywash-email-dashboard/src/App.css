@@ -1,0 +1,420 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Layout ── */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-bottom: 3px solid #0077b6;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo { font-size: 22px; }
+
+.header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.header-sub {
+  font-size: 12px;
+  color: #90a4c0;
+  margin-top: 1px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.stat-chip.urgent  { background: rgba(220,38,38,0.15);  color: #fca5a5; }
+.stat-chip.action  { background: rgba(234,88,12,0.15);  color: #fdba74; }
+.stat-chip.important { background: rgba(37,99,235,0.15); color: #93c5fd; }
+
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 210px;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 12px 0;
+}
+
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  padding: 8px 12px 4px;
+}
+
+.sidebar-section { padding: 0 8px; }
+
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #475569;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.sidebar-btn:hover { background: #f1f5f9; }
+
+.sidebar-btn.active {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.sidebar-btn .count {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.sidebar-btn[data-priority="urgent"] .count  { background: #fee2e2; color: #dc2626; }
+.sidebar-btn[data-priority="action"] .count  { background: #ffedd5; color: #ea580c; }
+.sidebar-btn[data-priority="important"] .count { background: #dbeafe; color: #2563eb; }
+
+.sidebar-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 8px 12px;
+}
+
+/* ── Email list pane ── */
+.email-list-pane {
+  width: 330px;
+  border-right: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.pane-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.pane-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.priority-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.priority-dot.urgent   { background: #dc2626; }
+.priority-dot.action   { background: #ea580c; }
+.priority-dot.important { background: #2563eb; }
+
+.pane-count {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.search-bar {
+  padding: 10px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.search-input {
+  width: 100%;
+  padding: 7px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  font-size: 13px;
+  outline: none;
+  background: #f8fafc;
+  color: #1e293b;
+  transition: border 0.15s;
+}
+
+.search-input:focus {
+  border-color: #2563eb;
+  background: #fff;
+}
+
+.email-list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.email-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e9eef4;
+  cursor: pointer;
+  transition: background 0.1s;
+  background: #fff;
+  position: relative;
+}
+
+.email-item:hover    { background: #f1f5f9; }
+.email-item.selected { background: #eff6ff; border-left: 3px solid #2563eb; }
+.email-item.unread .email-subject { font-weight: 700; }
+
+.unread-dot {
+  position: absolute;
+  top: 15px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2563eb;
+}
+
+.email-from {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 16px;
+}
+
+.email-subject {
+  font-size: 12.5px;
+  color: #374151;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email-preview {
+  font-size: 11.5px;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.email-date { font-size: 11px; color: #94a3b8; }
+
+.priority-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.priority-badge.urgent    { background: #fee2e2; color: #dc2626; }
+.priority-badge.action    { background: #ffedd5; color: #ea580c; }
+.priority-badge.important { background: #dbeafe; color: #2563eb; }
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+}
+
+.empty-icon { font-size: 36px; }
+.empty-state p { font-size: 13px; }
+
+/* ── Detail pane ── */
+.detail-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+}
+
+.detail-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  gap: 12px;
+}
+
+.detail-placeholder-icon { font-size: 48px; opacity: 0.4; }
+.detail-placeholder p    { font-size: 14px; }
+
+.detail-header {
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.detail-subject {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.detail-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.detail-from       { font-size: 13px; color: #475569; }
+.detail-from strong { color: #1e293b; }
+.detail-date       { font-size: 12px; color: #94a3b8; margin-left: auto; }
+
+.detail-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #e2e8f0;
+  color: #475569;
+  font-weight: 500;
+}
+
+.detail-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+}
+
+.detail-body-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #374151;
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+.detail-actions {
+  padding: 14px 28px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn {
+  padding: 8px 18px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary   { background: #2563eb; color: #fff; }
+.btn-primary:hover { opacity: 0.88; }
+
+.btn-secondary { background: #f1f5f9; color: #374151; border: 1px solid #e2e8f0; }
+.btn-secondary:hover { background: #e2e8f0; }
+
+.btn-danger    { background: #fee2e2; color: #dc2626; }
+.btn-danger:hover { background: #fecaca; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar          { width: 5px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
