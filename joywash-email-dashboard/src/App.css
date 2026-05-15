@@ -413,6 +413,224 @@ body {
 .btn-danger    { background: #fee2e2; color: #dc2626; }
 .btn-danger:hover { background: #fecaca; }
 
+/* ── Auth screen ── */
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2f5;
+}
+
+.auth-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 48px 40px 36px;
+  width: 440px;
+  max-width: 95vw;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.auth-logo { font-size: 48px; margin-bottom: 12px; }
+
+.auth-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 28px;
+}
+
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  margin-bottom: 28px;
+}
+
+.btn-google:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.12); border-color: #94a3b8; }
+.btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.auth-warning {
+  background: #fff7ed;
+  border: 1.5px solid #fed7aa;
+  border-radius: 10px;
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 13px;
+  color: #9a3412;
+  margin-bottom: 24px;
+}
+
+.auth-warning strong { display: block; margin-bottom: 8px; font-size: 14px; }
+.auth-warning p { margin-bottom: 10px; }
+.auth-warning ol { padding-left: 18px; line-height: 2; }
+.auth-warning code { background: #ffedd5; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+.auth-priority-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 20px;
+  margin-top: 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #475569;
+}
+
+/* ── Header extras ── */
+.header-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #0077b6;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #90a4c0;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.btn-link:hover { color: #fff; }
+
+/* ── Error + loading ── */
+.error-banner {
+  padding: 10px 16px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 12px;
+  border-bottom: 1px solid #fecaca;
+}
+
+.loading-body {
+  padding: 24px 28px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* ── Reply modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  padding: 0 0 40px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 560px;
+  max-width: 96vw;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.modal-close:hover { background: #f1f5f9; color: #374151; }
+
+.modal-to {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 18px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.modal-label { font-size: 11px; font-weight: 700; color: #94a3b8; width: 50px; flex-shrink: 0; }
+.modal-to-value { font-size: 13px; color: #374151; }
+
+.modal-body {
+  flex: 1;
+  min-height: 180px;
+  padding: 14px 18px;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1e293b;
+  resize: none;
+  outline: none;
+}
+
+.modal-error {
+  padding: 8px 18px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  padding: 12px 18px;
+  border-top: 1px solid #e2e8f0;
+}
+
 /* ── Scrollbar ── */
 ::-webkit-scrollbar          { width: 5px; }
 ::-webkit-scrollbar-track    { background: transparent; }

@@ -1,6 +1,10 @@
 import { useState, useMemo } from "react";
 import "./App.css";
-import { mockEmails, PRIORITY } from "./data/mockEmails";
+import { PRIORITY } from "./data/mockEmails";
+import { useGmailAuth } from "./hooks/useGmailAuth";
+import { useEmails } from "./hooks/useEmails";
+import AuthScreen from "./components/AuthScreen";
+import ReplyModal from "./components/ReplyModal";
 
 const VIEWS = {
   ALL: "all",
@@ -39,15 +43,28 @@ function countByPriority(emails, priority) {
   return emails.filter((e) => e.priority === priority).length;
 }
 
-function unreadCount(emails, priority) {
+function unreadCountByPriority(emails, priority) {
   return emails.filter((e) => e.priority === priority && !e.read).length;
 }
 
 export default function App() {
-  const [emails, setEmails] = useState(mockEmails);
+  const { token, profile, setProfile, ready, signIn, signOut } = useGmailAuth();
+  const {
+    emails,
+    loading,
+    error,
+    fetchEmails,
+    fetchBody,
+    markRead,
+    markUnread,
+    archive,
+    markAllRead,
+  } = useEmails(token, setProfile);
+
   const [view, setView] = useState(VIEWS.ALL);
-  const [selected, setSelected] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const [search, setSearch] = useState("");
+  const [replyOpen, setReplyOpen] = useState(false);
 
   const filtered = useMemo(() => {
     let list = view === VIEWS.ALL ? emails : emails.filter((e) => e.priority === view);
@@ -57,37 +74,30 @@ export default function App() {
         (e) =>
           e.fromName.toLowerCase().includes(q) ||
           e.subject.toLowerCase().includes(q) ||
-          e.preview.toLowerCase().includes(q) ||
-          e.tags.some((t) => t.toLowerCase().includes(q))
+          e.preview.toLowerCase().includes(q)
       );
     }
     const order = [PRIORITY.URGENT, PRIORITY.ACTION, PRIORITY.IMPORTANT];
     return [...list].sort((a, b) => order.indexOf(a.priority) - order.indexOf(b.priority));
   }, [emails, view, search]);
 
-  function selectEmail(email) {
-    setSelected(email.id);
-    if (!email.read) {
-      setEmails((prev) => prev.map((e) => (e.id === email.id ? { ...e, read: true } : e)));
-    }
+  const selectedEmail = selectedId ? emails.find((e) => e.id === selectedId) : null;
+
+  async function selectEmail(email) {
+    setSelectedId(email.id);
+    await markRead(email);
+    await fetchBody(email);
   }
 
-  function markAllRead() {
-    setEmails((prev) =>
-      prev.map((e) =>
-        view === VIEWS.ALL || e.priority === view ? { ...e, read: true } : e
-      )
-    );
+  const urgentUnread = unreadCountByPriority(emails, PRIORITY.URGENT);
+  const actionUnread = unreadCountByPriority(emails, PRIORITY.ACTION);
+  const importantUnread = unreadCountByPriority(emails, PRIORITY.IMPORTANT);
+
+  if (!token) {
+    return <AuthScreen onSignIn={signIn} ready={ready} />;
   }
 
-  const selectedEmail = selected ? emails.find((e) => e.id === selected) : null;
-
-  const urgentUnread = unreadCount(emails, PRIORITY.URGENT);
-  const actionUnread = unreadCount(emails, PRIORITY.ACTION);
-  const importantUnread = unreadCount(emails, PRIORITY.IMPORTANT);
-
-  const paneTitle =
-    view === VIEWS.ALL ? "All Emails" : PRIORITY_LABELS[view];
+  const paneTitle = view === VIEWS.ALL ? "All Emails" : PRIORITY_LABELS[view];
 
   return (
     <div className="app">
@@ -109,6 +119,20 @@ export default function App() {
           {importantUnread > 0 && (
             <span className="stat-chip important">🔵 {importantUnread} important</span>
           )}
+          <button
+            className="btn btn-secondary"
+            style={{ fontSize: 12, padding: "4px 12px" }}
+            onClick={fetchEmails}
+            disabled={loading}
+          >
+            {loading ? "⟳ Loading…" : "↺ Refresh"}
+          </button>
+          <div className="header-profile" title={`Signed in as ${profile?.emailAddress || ""}`}>
+            <span className="profile-avatar">
+              {profile?.emailAddress?.[0]?.toUpperCase() || "?"}
+            </span>
+            <button className="btn-link" onClick={signOut}>Sign out</button>
+          </div>
         </div>
       </header>
 
@@ -178,7 +202,7 @@ export default function App() {
                   color: "#2563eb",
                   padding: 0,
                 }}
-                onClick={markAllRead}
+                onClick={() => markAllRead(filtered)}
               >
                 Mark all read
               </button>
@@ -195,7 +219,18 @@ export default function App() {
           </div>
 
           <div className="email-list">
-            {filtered.length === 0 ? (
+            {error && (
+              <div className="error-banner">
+                ⚠ {error} —{" "}
+                <button className="btn-link" onClick={fetchEmails}>retry</button>
+              </div>
+            )}
+            {loading && emails.length === 0 ? (
+              <div className="empty-state">
+                <span className="empty-icon">⟳</span>
+                <p>Loading your inbox…</p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="empty-state">
                 <span className="empty-icon">📭</span>
                 <p>No emails found</p>
@@ -249,37 +284,38 @@ export default function App() {
                   </span>
                   <span className="detail-date">{formatFullDate(selectedEmail.date)}</span>
                 </div>
-                {selectedEmail.tags.length > 0 && (
-                  <div className="detail-tags">
-                    {selectedEmail.tags.map((t) => (
-                      <span key={t} className="tag">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
 
               <div className="detail-body">
-                <pre className="detail-body-text">{selectedEmail.body}</pre>
+                {selectedEmail.body === null ? (
+                  <div className="loading-body">Loading message…</div>
+                ) : (
+                  <pre className="detail-body-text">{selectedEmail.body}</pre>
+                )}
               </div>
 
               <div className="detail-actions">
-                <button className="btn btn-primary">↩ Reply</button>
-                <button className="btn btn-secondary">↪ Forward</button>
+                <button className="btn btn-primary" onClick={() => setReplyOpen(true)}>
+                  ↩ Reply
+                </button>
                 <button
                   className="btn btn-secondary"
                   onClick={() =>
-                    setEmails((prev) =>
-                      prev.map((e) =>
-                        e.id === selectedEmail.id ? { ...e, read: !e.read } : e
-                      )
-                    )
+                    selectedEmail.read
+                      ? markUnread(selectedEmail)
+                      : markRead(selectedEmail)
                   }
                 >
                   {selectedEmail.read ? "Mark unread" : "Mark read"}
                 </button>
-                <button className="btn btn-danger" style={{ marginLeft: "auto" }}>
+                <button
+                  className="btn btn-danger"
+                  style={{ marginLeft: "auto" }}
+                  onClick={() => {
+                    archive(selectedEmail.id);
+                    setSelectedId(null);
+                  }}
+                >
                   🗑 Archive
                 </button>
               </div>
@@ -287,6 +323,16 @@ export default function App() {
           )}
         </div>
       </div>
+
+      {replyOpen && selectedEmail && (
+        <ReplyModal
+          email={selectedEmail}
+          profile={profile}
+          token={token}
+          onClose={() => setReplyOpen(false)}
+          onSent={() => {}}
+        />
+      )}
     </div>
   );
 }
